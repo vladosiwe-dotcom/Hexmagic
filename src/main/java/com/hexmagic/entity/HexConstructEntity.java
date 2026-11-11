@@ -531,7 +531,7 @@ public class HexConstructEntity extends Entity {
         entityData.set(HP, Math.max(0f, hp));
         float frac = 1f - Mth.clamp(hp / getMaxHp(), 0f, 1f);
         HexFx.send(level, HexFx.WALL_HIT, worldHit, Vec3.ZERO, Mth.clamp(amount / 6f, 0.4f, 2.5f), frac, getId());
-        level.playSound(null, worldHit.x, worldHit.y, worldHit.z, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.PLAYERS, 1.1f, 1.5f - frac * 0.9f);
+        level.playSound(null, worldHit.x, worldHit.y, worldHit.z, com.hexmagic.registry.HexSounds.HEX_HIT.get(), SoundSource.PLAYERS, 1.0f, 1.25f - frac * 0.5f);
         if (hp <= 0f) {
             shatter(worldHit, attacker == null ? 0f : 1f);
             if (countsAsProtectiveField) {
@@ -553,8 +553,7 @@ public class HexConstructEntity extends Entity {
                 (float) (px * b.u().x + py * b.u().y + pz * b.u().z),
                 (float) (px * b.v().x + py * b.v().y + pz * b.v().z), push));
         setState(ST_BREAKING);
-        level().playSound(null, getX(), getY(), getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.3f, 0.75f);
-        level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 1.4f, 0.6f);
+        level().playSound(null, getX(), getY(), getZ(), com.hexmagic.registry.HexSounds.HEX_SHATTER.get(), SoundSource.PLAYERS, 1.4f, 0.9f + level().random.nextFloat() * 0.2f);
     }
 
     public void dissolve() {
@@ -639,8 +638,7 @@ public class HexConstructEntity extends Entity {
             owner.hurtMarked = true;
             owner.resetFallDistance();
             HexFx.send(level, HexFx.LAUNCH_RING, position(), new Vec3(0, 1, 0), getHalfW() * 1.3f, 1f);
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.WIND_CHARGE_BURST.value(), SoundSource.PLAYERS, 1.2f, 0.7f);
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.TRIDENT_RIPTIDE_2.value(), SoundSource.PLAYERS, 0.9f, 1.25f);
+            level.playSound(null, getX(), getY(), getZ(), com.hexmagic.registry.HexSounds.LAUNCH.get(), SoundSource.PLAYERS, 1.3f, 1.0f);
         }
         double oy = owner.getY();
         double climb = Double.isNaN(lastOwnerY) ? 1.0 : oy - lastOwnerY;
@@ -708,8 +706,7 @@ public class HexConstructEntity extends Entity {
             setState(ST_FLYING);
             Vec3 f = basis().f();
             HexFx.send(level, HexFx.LAUNCH_RING, position(), f, Math.max(getHalfW(), getHalfH()) * 1.2f, 0.6f);
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.TRIDENT_THROW.value(), SoundSource.PLAYERS, 1.4f, 0.55f);
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.BREEZE_SHOOT, SoundSource.PLAYERS, 1.0f, 0.7f);
+            level.playSound(null, getX(), getY(), getZ(), com.hexmagic.registry.HexSounds.DRILL_FIRE.get(), SoundSource.PLAYERS, 1.2f, 1.25f);
         }
     }
 

@@ -127,8 +127,7 @@ public final class HexCasting {
         ServerLevel level = player.serverLevel();
         HexConstructEntity wall = spawnWall(level, player, d, formTicks(player, d, 14));
         level.addFreshEntity(wall);
-        level.playSound(null, wall.getX(), wall.getY(), wall.getZ(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.PLAYERS, 1.4f, 0.75f);
-        level.playSound(null, wall.getX(), wall.getY(), wall.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.8f, 1.6f);
+        level.playSound(null, wall.getX(), wall.getY(), wall.getZ(), com.hexmagic.registry.HexSounds.HEX_FORM.get(), SoundSource.PLAYERS, 1.2f, 0.95f + level.random.nextFloat() * 0.1f);
         markCast(player, d);
     }
 
@@ -164,7 +163,7 @@ public final class HexCasting {
         HexDrillEntity drill = HexDrillEntity.createCharging(level, player);
         level.addFreshEntity(drill);
         d.drillId = drill.getId();
-        level.playSound(null, player.getX(), player.getY() + 2, player.getZ(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.PLAYERS, 1.2f, 0.6f);
+        level.playSound(null, player.getX(), player.getY() + 2, player.getZ(), com.hexmagic.registry.HexSounds.HEX_FORM.get(), SoundSource.PLAYERS, 0.9f, 0.7f);
         markCast(player, d);
     }
 
@@ -240,7 +239,7 @@ public final class HexCasting {
         d.safeLandingTicks = SAFE_LANDING_WINDOW_TICKS;
         d.cushionShown = false;
         cooldown(player, d, HexAbility.LAUNCH, 40);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.PLAYERS, 1.4f, 0.9f);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), com.hexmagic.registry.HexSounds.HEX_FORM.get(), SoundSource.PLAYERS, 1.1f, 1.1f);
         markCast(player, d);
     }
 
@@ -280,7 +279,7 @@ public final class HexCasting {
         level.addFreshEntity(swarm);
         d.swarmId = swarm.getId();
         d.dirty = true;
-        level.playSound(null, player.getX(), player.getY() + 2, player.getZ(), SoundEvents.AMETHYST_CLUSTER_PLACE, SoundSource.PLAYERS, 1.0f, 1.3f);
+        level.playSound(null, player.getX(), player.getY() + 2, player.getZ(), com.hexmagic.registry.HexSounds.HEX_FORM.get(), SoundSource.PLAYERS, 0.8f, 1.35f);
     }
 
     public static void onSwarmFinished(ServerPlayer player, HexSwarmEntity swarm) {
@@ -311,8 +310,7 @@ public final class HexCasting {
         d.prisonId = prison.getId();
         cooldown(player, d, HexAbility.PRISON, HexConfig.PRISON_COOLDOWN_TICKS.get());
         HexFx.send(level, HexFx.PRISON_PREP, player.position(), player.getLookAngle(), HexPrisonEntity.PREP_TICKS, 0f, player.getId());
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.PLAYERS, 1.5f, 0.5f);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.PLAYERS, 0.8f, 1.4f);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), com.hexmagic.registry.HexSounds.HEX_FORM.get(), SoundSource.PLAYERS, 1.3f, 0.75f);
         markCast(player, d);
     }
 

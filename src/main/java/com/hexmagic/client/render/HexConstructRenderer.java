@@ -78,7 +78,13 @@ public class HexConstructRenderer extends EntityRenderer<HexConstructEntity> {
                 float edge = Math.min(halfW - Math.abs(lu), halfH - Math.abs(lv));
                 if (edge < -0.28f) continue;
                 float gate = HexHash.unit(seed, q, r, 2);
-                if (edge < 0f ? gate > 0.3f : edge < 0.26f && gate > 0.78f) continue;
+                float edgeFade = 1f;
+                if (kind == HexConstructEntity.KIND_PRISON && Math.abs(lu) > Math.abs(lv) * 0.5f && edge < 0.2f) {
+                    // Closing prison walls: cells along the shrinking sides fold away one by one instead
+                    // of popping out, so the wall visibly gives up cells as it moves in.
+                    edgeFade = HexMesh.smooth((edge + 0.28f) / 0.48f);
+                    if (edgeFade <= 0.02f) continue;
+                } else if (edge < 0f ? gate > 0.3f : edge < 0.26f && gate > 0.78f) continue;
                 int h = HexHash.mix(seed, q, r, 1);
 
                 // --- per-cell constants
@@ -95,8 +101,8 @@ public class HexConstructRenderer extends EntityRenderer<HexConstructEntity> {
                 float appear = Mth.clamp((age - delay) / Math.max(1.5f, formTicks * 0.38f), 0f, 1f);
                 if (appear <= 0f) continue;
                 float appearE = HexMesh.easeOutBack(appear);
-                float scale = sizeVar * Math.min(1f, appearE);
-                float alpha = Math.min(1f, appear * 1.6f);
+                float scale = sizeVar * Math.min(1f, appearE) * edgeFade;
+                float alpha = Math.min(1f, appear * 1.6f) * (0.35f + 0.65f * edgeFade);
                 if (appear < 1f) {
                     float slide = (1f - HexMesh.easeOutCubic(appear));
                     float inv = dist > 0.001f ? 1f / dist : 0f;

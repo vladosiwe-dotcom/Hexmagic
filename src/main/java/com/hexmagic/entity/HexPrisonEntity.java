@@ -122,7 +122,7 @@ public class HexPrisonEntity extends Entity {
             if (stage != lastSoundStage) {
                 lastSoundStage = stage;
                 level.playSound(null, center.x, center.y + 1.5, center.z, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.3f, 0.5f + raw * 0.9f);
-                level.playSound(null, center.x, center.y + 1.5, center.z, SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 0.6f, 0.5f + raw * 0.5f);
+                level.playSound(null, center.x, center.y + 1.5, center.z, com.hexmagic.registry.HexSounds.DRILL_GRIND.get(), SoundSource.PLAYERS, 0.7f, 0.5f + raw * 0.4f);
             }
         }
 
@@ -142,9 +142,7 @@ public class HexPrisonEntity extends Entity {
                     wallHalfWidth(i, 0f), HEIGHT * 0.5f + 0.1f, 12, life);
             level.addFreshEntity(walls[i]);
         }
-        level.playSound(null, center.x, center.y + 1.5, center.z, SoundEvents.AMETHYST_CLUSTER_PLACE, SoundSource.PLAYERS, 1.6f, 0.5f);
-        level.playSound(null, center.x, center.y + 1.5, center.z, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
-        level.playSound(null, center.x, center.y + 1.5, center.z, SoundEvents.IRON_DOOR_CLOSE, SoundSource.PLAYERS, 1.0f, 0.6f);
+        level.playSound(null, center.x, center.y + 1.5, center.z, com.hexmagic.registry.HexSounds.PRISON_CLOSE.get(), SoundSource.PLAYERS, 1.6f, 1.0f);
     }
 
     /** Walls 0/1 close the room along the caster's line of sight, walls 2/3 are the sides. */
@@ -199,8 +197,7 @@ public class HexPrisonEntity extends Entity {
                 e.hurt(HexDamage.source(level, HexDamage.CRUSH, this, owner), dmg);
             }
             HexFx.send(level, HexFx.CRUSH, mid, new Vec3(0, 1, 0), 2.4f, 1f);
-            level.playSound(null, mid.x, mid.y, mid.z, SoundEvents.MACE_SMASH_GROUND_HEAVY, SoundSource.PLAYERS, 1.2f, 0.8f);
-            level.playSound(null, mid.x, mid.y, mid.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.6f, 0.5f);
+            level.playSound(null, mid.x, mid.y, mid.z, com.hexmagic.registry.HexSounds.PRISON_CRUSH.get(), SoundSource.PLAYERS, 1.6f, 1.0f);
             for (HexConstructEntity w : walls) {
                 if (w != null && !w.isBroken()) w.shatter(mid, 1f);
             }

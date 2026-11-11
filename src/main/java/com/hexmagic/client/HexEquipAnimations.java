@@ -43,8 +43,7 @@ public final class HexEquipAnimations {
     private static void start(ClientLevel level, Player p, State s, InteractionHand hand, long now) {
         if (hand == InteractionHand.MAIN_HAND) s.mainStart = now;
         else s.offStart = now;
-        level.playLocalSound(p.getX(), p.getY() + 1, p.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.9f, 1.6f, false);
-        level.playLocalSound(p.getX(), p.getY() + 1, p.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.5f, 1.8f, false);
+        level.playLocalSound(p.getX(), p.getY() + 1, p.getZ(), com.hexmagic.registry.HexSounds.SUMMON.get(), SoundSource.PLAYERS, 0.8f, 1.0f, false);
     }
 
     /** Animation progress 0..1 for the entity's hand, or 1 when no animation is running. */

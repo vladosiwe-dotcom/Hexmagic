@@ -195,6 +195,41 @@ public class HexGameTests {
         });
     }
 
+    @GameTest(templateNamespace = "hexmagic", template = TEMPLATE, timeoutTicks = 200)
+    public static void drillPassesThroughOwnPrison(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Zombie owner = caster(helper, new Vec3(3.5, 1.0, 0.5), 0f);
+        Zombie target = dummy(helper, new Vec3(3.5, 1.0, 5.5));
+        HexPrisonEntity prison = HexPrisonEntity.create(level, owner, target);
+        level.addFreshEntity(prison);
+        float[] before = new float[1];
+        HexDrillEntity[] drill = new HexDrillEntity[1];
+        helper.runAfterDelay(HexPrisonEntity.PREP_TICKS + 14, () -> {
+            helper.assertTrue(prison.contains(target), "target should be locked in the prison");
+            before[0] = target.getHealth();
+            drill[0] = HexDrillEntity.createCharging(level, owner);
+            level.addFreshEntity(drill[0]);
+        });
+        helper.runAfterDelay(HexPrisonEntity.PREP_TICKS + 14 + 32, () -> {
+            boolean anyOpen = false;
+            for (HexConstructEntity w : level.getEntitiesOfClass(HexConstructEntity.class, target.getBoundingBox().inflate(4))) {
+                anyOpen |= w.hasAperture();
+            }
+            helper.assertTrue(anyOpen, "the wall facing the caster should open for the charging drill");
+            helper.assertTrue(drill[0].launch(owner), "drill should launch");
+        });
+        helper.runAfterDelay(HexPrisonEntity.PREP_TICKS + 14 + 70, () -> {
+            helper.assertTrue(target.getHealth() < before[0], "drill should reach the prisoner through the passage");
+            int walls = 0;
+            for (HexConstructEntity w : level.getEntitiesOfClass(HexConstructEntity.class, target.getBoundingBox().inflate(4))) {
+                helper.assertTrue(w.getHp() == w.getMaxHp(), "own prison walls must stay intact");
+                walls++;
+            }
+            helper.assertTrue(walls == 4, "prison must keep all four walls, got " + walls);
+            helper.succeed();
+        });
+    }
+
     @GameTest(templateNamespace = "hexmagic", template = TEMPLATE, timeoutTicks = 20)
     public static void launchVelocityMath(GameTestHelper helper) {
         double v = HexConstructEntity.launchVelocity(15.0, 0.08);

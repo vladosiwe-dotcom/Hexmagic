@@ -46,5 +46,17 @@
  "death.attack.hexmagic.spike": "%1$s пронзён(а) шипами из сот",
  "death.attack.hexmagic.spike.player": "%1$s пронзён(а) шипами игрока %2$s",
  "death.attack.hexmagic.crush": "%1$s раздавлен(а) в Хекс Тюрьме",
- "death.attack.hexmagic.crush.player": "%1$s раздавлен(а) в Хекс Тюрьме игрока %2$s"
+ "death.attack.hexmagic.crush.player": "%1$s раздавлен(а) в Хекс Тюрьме игрока %2$s",
+ "subtitles.hexmagic.hex_form": "Формируется барьер из сот",
+ "subtitles.hexmagic.hex_hit": "Трескается сота барьера",
+ "subtitles.hexmagic.hex_shatter": "Барьер рассыпается",
+ "subtitles.hexmagic.drill_charge": "Раскручивается Хекса Бур",
+ "subtitles.hexmagic.drill_fire": "Выстрел Хекса Бура",
+ "subtitles.hexmagic.drill_grind": "Хекса Бур сверлит",
+ "subtitles.hexmagic.reflect": "Снаряд отражён",
+ "subtitles.hexmagic.launch": "Поднимается платформа",
+ "subtitles.hexmagic.prison_close": "Смыкается Хекс Тюрьма",
+ "subtitles.hexmagic.prison_crush": "Хекс Тюрьма сдавливает",
+ "subtitles.hexmagic.swarm_fire": "Вылетает малый бур",
+ "subtitles.hexmagic.summon": "Призыв Хекс Посоха"
 }

@@ -46,5 +46,17 @@
  "death.attack.hexmagic.spike": "%1$s was impaled on honeycomb spikes",
  "death.attack.hexmagic.spike.player": "%1$s was impaled by %2$s's spikes",
  "death.attack.hexmagic.crush": "%1$s was crushed in a Hex Prison",
- "death.attack.hexmagic.crush.player": "%1$s was crushed in %2$s's Hex Prison"
+ "death.attack.hexmagic.crush.player": "%1$s was crushed in %2$s's Hex Prison",
+ "subtitles.hexmagic.hex_form": "Honeycomb barrier forms",
+ "subtitles.hexmagic.hex_hit": "Barrier cell cracks",
+ "subtitles.hexmagic.hex_shatter": "Barrier shatters",
+ "subtitles.hexmagic.drill_charge": "Hexa Drill spins up",
+ "subtitles.hexmagic.drill_fire": "Hexa Drill fires",
+ "subtitles.hexmagic.drill_grind": "Hexa Drill grinds",
+ "subtitles.hexmagic.reflect": "Projectile reflected",
+ "subtitles.hexmagic.launch": "Hexa Launch platform rises",
+ "subtitles.hexmagic.prison_close": "Hex Prison closes",
+ "subtitles.hexmagic.prison_crush": "Hex Prison crushes",
+ "subtitles.hexmagic.swarm_fire": "Small drill launches",
+ "subtitles.hexmagic.summon": "Hex Staff summoned"
 }

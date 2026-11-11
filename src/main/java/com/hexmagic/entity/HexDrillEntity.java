@@ -344,8 +344,9 @@ public class HexDrillEntity extends Entity {
                 level.playSound(null, owner.getX(), owner.getY() + 2.5, owner.getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 0.9f, 1.6f);
             }
         }
-        if (stateTicks % 5 == 1) {
-            level.playSound(null, owner.getX(), owner.getY() + 2.5, owner.getZ(), SoundEvents.BEACON_AMBIENT, SoundSource.PLAYERS, 0.5f + charge * 0.6f, 0.9f + charge * 1.1f);
+        if (stateTicks % 6 == 1) {
+            // One grain of whirring rotor, replayed higher and louder as the drill spins up.
+            level.playSound(null, owner.getX(), owner.getY() + 2.5, owner.getZ(), com.hexmagic.registry.HexSounds.DRILL_CHARGE.get(), SoundSource.PLAYERS, 0.35f + charge * 0.65f, 0.6f + charge * 1.2f);
         }
 
         Vec3 look = owner.getLookAngle();
@@ -416,9 +417,7 @@ public class HexDrillEntity extends Entity {
         flightTicks = 0;
         HexConstructEntity.openAperturesAlong(level, owner, tip, tip.add(dir.scale(30.0)), boreRadius(charge) + 0.45f, 14);
         HexFx.send(level, HexFx.LAUNCH_RING, tip.subtract(dir.scale(lengthFor(scale))), dir, baseRadiusFor(scale) * 2.2f, 0.4f + charge * 0.6f, getId());
-        level.playSound(null, tip.x, tip.y, tip.z, SoundEvents.TRIDENT_RIPTIDE_3.value(), SoundSource.PLAYERS, 1.3f, 1.5f - charge * 0.5f);
-        level.playSound(null, tip.x, tip.y, tip.z, SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), SoundSource.PLAYERS, 1.2f, 0.6f + charge * 0.3f);
-        level.playSound(null, tip.x, tip.y, tip.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 0.25f + charge * 0.35f, 1.7f);
+        level.playSound(null, tip.x, tip.y, tip.z, com.hexmagic.registry.HexSounds.DRILL_FIRE.get(), SoundSource.PLAYERS, 1.0f + charge * 1.0f, 1.25f - charge * 0.35f);
         return true;
     }
 
@@ -607,7 +606,7 @@ public class HexDrillEntity extends Entity {
             if (grindTicks % interval == 0) {
                 boolean destroyed = wall.damage(dmg, position(), owner);
                 grindHits++;
-                level.playSound(null, getX(), getY(), getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 1.0f, 1.6f);
+                level.playSound(null, getX(), getY(), getZ(), com.hexmagic.registry.HexSounds.DRILL_GRIND.get(), SoundSource.PLAYERS, 1.0f, 1.3f);
                 if (destroyed) {
                     resumeFlight(level, 0.6);
                     return;
@@ -649,7 +648,7 @@ public class HexDrillEntity extends Entity {
                 }
             }
             HexFx.send(level, HexFx.IMPACT, position(), dir, mini ? 0.6f : 0.9f + getPower() * 0.8f, 1f);
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, mini ? 0.6f : 1.1f, mini ? 1.9f : 1.3f);
+            level.playSound(null, getX(), getY(), getZ(), com.hexmagic.registry.HexSounds.DRILL_GRIND.get(), SoundSource.PLAYERS, mini ? 0.6f : 1.1f, mini ? 1.6f : 1.0f);
             if (last) {
                 passed.add(target.getId());
                 if (mini) breakApart(level, position(), dir, false);
@@ -678,7 +677,7 @@ public class HexDrillEntity extends Entity {
         if (hard) {
             HexFx.send(level, HexFx.IMPACT, at, dir, mini ? 0.8f : 1.6f + getPower() * 1.4f, 0.7f);
             if (!mini) HexFx.send(level, HexFx.GUST, at, dir, 2.0f + getPower() * 1.5f, 1f);
-            level.playSound(null, at.x, at.y, at.z, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, mini ? 0.6f : 1.3f, mini ? 1.5f : 0.7f);
+            level.playSound(null, at.x, at.y, at.z, com.hexmagic.registry.HexSounds.HEX_SHATTER.get(), SoundSource.PLAYERS, mini ? 0.5f : 1.2f, mini ? 1.6f : 0.85f);
             if (!mini) level.playSound(null, at.x, at.y, at.z, SoundEvents.MACE_SMASH_GROUND, SoundSource.PLAYERS, 0.9f, 1.2f);
         } else {
             level.playSound(null, at.x, at.y, at.z, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, mini ? 0.5f : 1.0f, mini ? 1.6f : 1.0f);

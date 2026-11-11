@@ -255,8 +255,7 @@ public class HexSwarmEntity extends Entity {
         level.addFreshEntity(drill);
         entityData.set(FIRED, getFiredMask() | (1 << next));
         sinceLastShot = FIRE_INTERVAL_TICKS;
-        level.playSound(null, slot.x, slot.y, slot.z, SoundEvents.BREEZE_SHOOT, SoundSource.PLAYERS, 0.9f, 1.5f + level.random.nextFloat() * 0.3f);
-        level.playSound(null, slot.x, slot.y, slot.z, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0f, 1.2f + next * 0.12f);
+        level.playSound(null, slot.x, slot.y, slot.z, com.hexmagic.registry.HexSounds.SWARM_FIRE.get(), SoundSource.PLAYERS, 1.0f, 0.9f + next * 0.08f);
         if (remaining() <= 0) finish(owner);
     }
 

@@ -163,7 +163,7 @@ public final class HexServerEvents {
         HexFx.send(level, HexFx.REFLECT, origin, incoming, 1.0f, 0f, player.getId());
         HexFx.send(level, HexFx.IMPACT, origin, incoming, 0.6f, 0f);
         level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.2f, 1.5f);
-        level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.2f, 1.2f);
+        level.playSound(null, origin.x, origin.y, origin.z, com.hexmagic.registry.HexSounds.REFLECT.get(), SoundSource.PLAYERS, 1.3f, 1.0f);
     }
 
     // ------------------------------------------------------------------ Hexa Launch: landing cushion
@@ -180,7 +180,7 @@ public final class HexServerEvents {
         } else {
             HexFx.send(level, HexFx.CUSHION, new Vec3(player.getX(), player.getY() + 0.05, player.getZ()), new Vec3(0, 1, 0), 1.9f, 2f, player.getId());
         }
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.1f, 0.9f);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), com.hexmagic.registry.HexSounds.HEX_HIT.get(), SoundSource.PLAYERS, 1.0f, 0.7f);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WIND_CHARGE_BURST.value(), SoundSource.PLAYERS, 0.5f, 1.6f);
         event.setCanceled(true);
         d.safeLandingTicks = 0;
