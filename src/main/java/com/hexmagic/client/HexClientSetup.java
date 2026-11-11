@@ -19,6 +19,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
+import com.hexmagic.client.render.HexRenderTypes;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
@@ -60,6 +62,14 @@ public final class HexClientSetup {
                 return staffRenderer;
             }
         }, HexItems.HEX_STAFF.get());
+    }
+
+    /** Own buffers for the honeycomb render types, so several can be filled at the same time. */
+    @SubscribeEvent
+    public static void onRenderBuffers(RegisterRenderBuffersEvent event) {
+        event.registerRenderBuffer(HexRenderTypes.GLOW);
+        event.registerRenderBuffer(HexRenderTypes.FILL);
+        event.registerRenderBuffer(HexRenderTypes.GLOW_NO_DEPTH);
     }
 
     @SubscribeEvent
