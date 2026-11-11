@@ -490,7 +490,10 @@ public class HexConstructEntity extends Entity {
             Vec3 a = p.position();
             Vec3 vel = p.getDeltaMovement();
             if (vel.lengthSqr() < 1.0e-4) continue;
-            Vector3f hit = intersect(a, a.add(vel), 0.1);
+            // Check the step it just made as well as the one it is about to make: depending on tick
+            // order a fast projectile may already have crossed the plane this tick.
+            Vector3f hit = intersect(new Vec3(p.xo, p.yo, p.zo), a, 0.1);
+            if (hit == null) hit = intersect(a, a.add(vel), 0.1);
             if (hit == null) continue;
             Vec3 world = localToWorld(hit.x, hit.y);
             float amount = HexCasting.estimateProjectileDamage(p);

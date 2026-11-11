@@ -35,6 +35,11 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (project.hasProperty('hexDemo')) {
+                // Scripted screenshot run: ./gradlew runClient -PhexDemo
+                systemProperty 'hexmagic.demo', 'true'
+                programArguments.addAll('--width', '1280', '--height', '720')
+            }
         }
 
         server {

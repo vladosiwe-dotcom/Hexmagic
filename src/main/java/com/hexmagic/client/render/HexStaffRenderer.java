@@ -84,7 +84,7 @@ public class HexStaffRenderer extends BlockEntityWithoutLevelRenderer {
                 float delay = HexHash.unit(seed, i, 0, 1) * 0.45f;
                 float t = Mth.clamp((progress - delay) / 0.4f, 0f, 1f);
                 if (t <= 0f) continue;
-                float ty = HexHash.unit(seed, i, 0, 2) * 1.9f - 0.8f;
+                float ty = HexHash.unit(seed, i, 0, 2) * 1.9f - 1.0f;
                 Vector3f start = HexMesh.jitter(HexHash.mix(seed, i, 0, 3), 2.2f).add(0.5f, ty + 0.125f, 0.5f);
                 Vector3f end = new Vector3f(0.5f, ty + 0.125f, 0.5f);
                 float move = HexMesh.easeOutCubic(t);
@@ -101,7 +101,7 @@ public class HexStaffRenderer extends BlockEntityWithoutLevelRenderer {
                 for (int i = 0; i < 8; i++) {
                     float ang = i * Mth.TWO_PI / 8f + time * 0.2f;
                     float r = 0.1f + HexMesh.easeOutCubic(burst) * 0.55f;
-                    c.set(0.5f + Mth.cos(ang) * r, 1.45f + burst * 0.2f, 0.5f + Mth.sin(ang) * r);
+                    c.set(0.5f + Mth.cos(ang) * r, 1.26f + burst * 0.2f, 0.5f + Mth.sin(ang) * r);
                     u.set(-Mth.sin(ang), 0, Mth.cos(ang));
                     v.set(0, 1, 0);
                     HexMesh.cell(cellMatrix, glow, fill, c, u, v, 0.07f * (1f - burst * 0.5f), 0.3f, 0.6f, 0.9f, 1f, 1.5f, 1f - burst, 0.2f);
@@ -114,7 +114,7 @@ public class HexStaffRenderer extends BlockEntityWithoutLevelRenderer {
         for (int i = 0; i < 3; i++) {
             float ang = time * 0.06f + i * Mth.TWO_PI / 3f;
             float bob = Mth.sin(time * 0.15f + i * 2f) * 0.05f;
-            c.set(0.5f + Mth.cos(ang) * 0.42f, 1.42f + bob, 0.5f + Mth.sin(ang) * 0.42f);
+            c.set(0.5f + Mth.cos(ang) * 0.42f, 1.24f + bob, 0.5f + Mth.sin(ang) * 0.42f);
             u.set(-Mth.sin(ang), 0, Mth.cos(ang));
             v.set(0, 1, 0);
             HexMesh.heatColor(0f, col);
