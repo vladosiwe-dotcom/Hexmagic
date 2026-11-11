@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -118,7 +119,11 @@ public final class HexServerEvents {
 
         // Aim back at the one who fired it when they are still around; otherwise straight back.
         Vec3 outgoing = incoming.scale(-1);
-        Vec3 origin = hit.getLocation();
+        // Vanilla reports the victim's feet as the hit point, so work out where the projectile really
+        // met the player: at its own height, on the side it came from.
+        double hitY = Mth.clamp(projectile.getY(), player.getY() + 0.3, player.getY() + player.getBbHeight() - 0.1);
+        double reach = player.getBbWidth() * 0.5 + 0.35;
+        Vec3 origin = new Vec3(player.getX() - incoming.x * reach, hitY, player.getZ() - incoming.z * reach);
         if (shooter instanceof LivingEntity living && living.isAlive() && living.level() == level && living.distanceToSqr(player) < 64 * 64) {
             Vec3 aim = living.getEyePosition().subtract(0, living.getBbHeight() * 0.2, 0).subtract(origin);
             if (aim.lengthSqr() > 1.0e-4) outgoing = aim.normalize();
@@ -132,7 +137,7 @@ public final class HexServerEvents {
         projectile.getPersistentData().putBoolean(REFLECTED_TAG, true);
         projectile.setOwner(player);
         projectile.setDeltaMovement(outgoing.scale(speed));
-        Vec3 pos = origin.add(outgoing.scale(0.6));
+        Vec3 pos = origin.add(outgoing.scale(0.35));
         projectile.setPos(pos.x, pos.y, pos.z);
         projectile.hasImpulse = true;
         projectile.hurtMarked = true;
@@ -146,6 +151,7 @@ public final class HexServerEvents {
 
         d.startCooldown(HexAbility.REFLECTION, Math.round(HexConfig.REFLECT_COOLDOWN_TICKS.get() * IronsCompat.cooldownMultiplier(player)));
         HexFx.send(level, HexFx.REFLECT, origin, incoming, 1.0f, 0f, player.getId());
+        HexFx.send(level, HexFx.IMPACT, origin, incoming, 0.6f, 0f);
         level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.2f, 1.5f);
         level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.2f, 1.2f);
     }

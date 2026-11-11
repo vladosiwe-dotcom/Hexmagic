@@ -154,11 +154,11 @@ public class HexDrillEntity extends Entity {
     }
 
     public static float lengthFor(float scale) {
-        return 3.1f * scale;
+        return 3.5f * scale;
     }
 
     public static float baseRadiusFor(float scale) {
-        return 0.95f * scale;
+        return 0.82f * scale;
     }
 
     /** Tip position of a drill that hovers above the head of a caster looking along {@code look}. */
@@ -291,6 +291,13 @@ public class HexDrillEntity extends Entity {
         if (spin > Mth.TWO_PI * 64f) {
             spin -= Mth.TWO_PI * 64f;
             spinO -= Mth.TWO_PI * 64f;
+        }
+
+        if (!isMini() && state == ST_FLYING && stateTicks % 2 == 0) {
+            // Rings of displaced air left hanging behind the drill.
+            float scale = scaleFor(clientCharge, false);
+            com.hexmagic.client.HexClientHooks.localFx(com.hexmagic.net.HexFx.GUST, position().subtract(dirX * lengthFor(scale), dirY * lengthFor(scale), dirZ * lengthFor(scale)),
+                    new Vec3(dirX, dirY, dirZ), baseRadiusFor(scale) * 2.4f, 0.55f + 0.45f * clientCharge);
         }
 
         if (lerpSteps > 0) {

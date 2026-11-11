@@ -36,7 +36,7 @@ public final class HexHud implements LayeredDraw.Layer {
     public void render(GuiGraphics g, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui || mc.player.isSpectator()) return;
-        if (!HexItems.isHoldingStaff(mc.player)) return;
+        if (!HexItems.isHoldingStaff(mc.player) || !HexClientConfig.SHOW_HUD.get()) return;
         float partial = delta.getGameTimeDeltaPartialTick(false);
         float time = mc.player.tickCount + partial;
         Font font = mc.font;
@@ -45,7 +45,7 @@ public final class HexHud implements LayeredDraw.Layer {
         // ---- ability column on the left
         int rows = HexAbility.COUNT + (IronsCompat.LOADED ? 1 : 0);
         int rowH = 15;
-        int x = 8, y = h / 2 - rows * rowH / 2 - 70;
+        int x = 8, y = Math.max(14, h / 2 - rows * rowH / 2 - 70 + HexClientConfig.HUD_OFFSET_Y.get());
         for (int i = 0; i < rows; i++) {
             int yy = y + i * rowH + 12;
             boolean irons = i == HexAbility.SELECT_IRONS;

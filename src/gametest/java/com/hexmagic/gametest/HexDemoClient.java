@@ -216,8 +216,11 @@ public final class HexDemoClient {
         at(235, () -> shot("13_launch_platform"));
         at(252, () -> shot("14_platform_rising"));
         at(290, () -> shot("15_platform_top"));
-        at(295, () -> { camera(CameraType.THIRD_PERSON_BACK); cmd("tp @s 6 -58 0"); });
-        at(330, () -> shot("16_landing"));
+        at(295, () -> { camera(CameraType.THIRD_PERSON_BACK); look(0, 25); cmd("tp @s 6 -46 0"); });
+        at(318, () -> shot("16_falling"));
+        at(322, () -> shot("16b_cushion"));
+        at(325, () -> shot("16c_landing"));
+        at(329, () -> shot("16d_landed"));
         at(350, () -> { cmd("tp @s 0 -60 0"); cmd("summon zombie -4 -60 9 {NoAI:1b,CustomName:'\"D\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}"); });
         at(358, () -> lookAt("D"));
         at(360, () -> press(HexAbility.PRISON));
@@ -234,8 +237,9 @@ public final class HexDemoClient {
         at(690, () -> shot("23_hex_attack_volley"));
         at(718, () -> { cmd("tp @s 12 -60 0"); look(0, 0); });
         at(720, () -> cmd("summon arrow 12 -58.4 6 {Motion:[0.0,0.0,-1.2],pickup:0b}"));
-        at(725, () -> shot("24_reflect"));
+        at(726, () -> shot("24_reflect"));
         at(728, () -> shot("25_reflect_2"));
+        at(731, () -> shot("26_reflect_3"));
         at(850, () -> Minecraft.getInstance().stop());
     }
 

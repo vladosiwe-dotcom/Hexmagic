@@ -26,6 +26,9 @@ public class HexMagic {
         HexEntities.ENTITIES.register(modBus);
         HexAttachments.ATTACHMENTS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, HexConfig.SPEC);
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+            container.registerConfig(ModConfig.Type.CLIENT, com.hexmagic.client.HexClientConfig.SPEC);
+        }
     }
 
     public static ResourceLocation id(String path) {

@@ -54,6 +54,7 @@ public final class HexFxManager {
             }
             if (p.b() > 1.5f) return; // nothing was shown: no cushion to collapse
         }
+        addShake(mc, p);
         if (EFFECTS.size() >= MAX_EFFECTS) EFFECTS.remove(0);
         Effect e = new Effect(p);
         EFFECTS.add(e);
@@ -62,11 +63,38 @@ public final class HexFxManager {
         }
     }
 
+    // ---- camera shake: "trauma" that decays; the shake itself is trauma squared
+    private static float trauma, traumaO;
+
+    private static void addShake(Minecraft mc, HexFxPayload p) {
+        if (mc.player == null) return;
+        float base = switch (p.kind()) {
+            case HexFx.IMPACT -> 0.12f * p.a();
+            case HexFx.CRUSH -> 0.6f;
+            case HexFx.LAUNCH_RING -> 0.18f + 0.25f * p.b();
+            case HexFx.CUSHION -> p.b() > 0.5f ? 0.3f : 0f;
+            default -> 0f;
+        };
+        if (base <= 0f) return;
+        double dist = Math.sqrt(mc.player.distanceToSqr(p.pos()));
+        float falloff = (float) Math.max(0.0, 1.0 - dist / 24.0);
+        trauma = Math.min(1f, trauma + base * falloff * falloff);
+    }
+
+    /** Current shake amount 0..1 for the camera, already eased. */
+    public static float shake(float partial) {
+        float t = Mth.lerp(partial, traumaO, trauma);
+        return t * t;
+    }
+
     public static void clear() {
         EFFECTS.clear();
+        trauma = traumaO = 0f;
     }
 
     public static void tick() {
+        traumaO = trauma;
+        trauma = Math.max(0f, trauma - 0.09f);
         Iterator<Effect> it = EFFECTS.iterator();
         while (it.hasNext()) {
             Effect e = it.next();

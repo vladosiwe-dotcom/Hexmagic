@@ -27,6 +27,8 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
@@ -163,6 +165,20 @@ public final class HexClientEvents {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
         Minecraft mc = Minecraft.getInstance();
         HexFxManager.render(event.getPoseStack(), mc.renderBuffers().bufferSource(), event.getCamera(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+    }
+
+    @SubscribeEvent
+    public static void onCameraAngles(ViewportEvent.ComputeCameraAngles event) {
+        float scale = HexClientConfig.SCREEN_SHAKE.get().floatValue();
+        if (scale <= 0f) return;
+        float shake = HexFxManager.shake((float) event.getPartialTick()) * scale;
+        if (shake <= 0.0005f) return;
+        Minecraft mc = Minecraft.getInstance();
+        float time = (mc.level == null ? 0 : mc.level.getGameTime() % 10000) + (float) event.getPartialTick();
+        // Three out-of-phase sines read as a rattle rather than a swing.
+        event.setYaw(event.getYaw() + shake * 1.6f * Mth.sin(time * 2.9f));
+        event.setPitch(event.getPitch() + shake * 1.6f * Mth.sin(time * 3.7f + 1.3f));
+        event.setRoll(event.getRoll() + shake * 1.1f * Mth.sin(time * 4.3f + 2.1f));
     }
 
     @SubscribeEvent
