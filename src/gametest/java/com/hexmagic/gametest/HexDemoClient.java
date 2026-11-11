@@ -36,6 +36,8 @@ public final class HexDemoClient {
     private static final String MODE = System.getProperty("hexmagic.demo", "");
     private static final boolean ENABLED = !MODE.isEmpty() && !MODE.equals("false");
     private static final boolean POSE_ONLY = MODE.equals("pose");
+    private static final boolean OBSERVE = MODE.equals("observe");
+    private static int seen = -1;
     private static boolean started;
     private static int waitTicks;
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("HexDemo");
@@ -110,7 +112,20 @@ public final class HexDemoClient {
 
     static {
         if (POSE_ONLY) poseScript();
-        else fullScript();
+        else if (!OBSERVE) fullScript();
+    }
+
+    /** Second player: stands aside, keeps looking at "Dev" and photographs what a bystander sees. */
+    private static void observeTick(Minecraft mc) {
+        Entity dev = null;
+        for (var p : mc.level.players()) if (p != mc.player && p.getGameProfile().getName().equals("Dev")) dev = p;
+        if (dev == null) return;
+        seen++;
+        Vec3 d = dev.getBoundingBox().getCenter().add(0, 0.8, 0).subtract(mc.player.getEyePosition());
+        look((float) (Math.atan2(-d.x, d.z) * 180 / Math.PI), (float) (-Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * 180 / Math.PI));
+        int[] shots = {8, 11, 14, 30, 50, 64, 100, 120, 140, 196, 204, 240, 256, 300, 372, 390, 535, 570, 660, 692, 730};
+        for (int t : shots) if (t == seen) shot("obs_" + String.format("%03d", t));
+        if (seen == 770) mc.stop();
     }
 
     private static void poseScript() {
@@ -144,6 +159,11 @@ public final class HexDemoClient {
 
     private static void fullScript() {
         at(1, () -> {
+            cmd("gamemode creative");
+            if (Boolean.getBoolean("hexmagic.demo.mp")) {
+                cmd("gamemode creative Obs");
+                cmd("tp Obs 6.5 -60 -5.5");
+            }
             cmd("time set 1000");
             cmd("weather clear");
             cmd("gamerule doDaylightCycle false");
@@ -249,6 +269,7 @@ public final class HexDemoClient {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) {
             if (++waitTicks % 100 == 0) LOGGER.info("[HexDemo] waiting, screen={} overlay={}", mc.screen == null ? null : mc.screen.getClass().getSimpleName(), mc.getOverlay());
+            if (Boolean.getBoolean("hexmagic.demo.mp")) return; // quick play connects by itself
             if (!started && mc.screen != null && !(mc.screen instanceof TitleScreen) && waitTicks > 20) {
                 // First launch shows the accessibility onboarding; skip straight to the title screen.
                 mc.options.onboardAccessibility = false;
@@ -268,6 +289,10 @@ public final class HexDemoClient {
             return;
         }
         if (mc.player == null || mc.screen != null) return;
+        if (OBSERVE) {
+            observeTick(mc);
+            return;
+        }
         t++;
         if (t % 50 == 0) LOGGER.info("[HexDemo] tick {}", t);
         for (Step s : STEPS) if (s.tick == t) s.action.run();

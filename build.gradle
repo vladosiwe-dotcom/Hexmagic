@@ -40,10 +40,21 @@ neoForge {
                 systemProperty 'hexmagic.demo', project.property('hexDemo') ?: 'true'
                 programArguments.addAll('--width', '1280', '--height', '720')
             }
+            if (project.hasProperty('hexUser')) {
+                // A second local player with its own game directory.
+                programArguments.addAll('--username', project.property('hexUser'))
+                gameDirectory = project.file('run-' + project.property('hexUser').toLowerCase())
+            }
+            if (project.hasProperty('hexServer')) {
+                // Join a locally running dedicated server instead of opening a singleplayer world.
+                systemProperty 'hexmagic.demo.mp', 'true'
+                programArguments.addAll('--quickPlayMultiplayer', project.property('hexServer') ?: 'localhost:25565')
+            }
         }
 
         server {
             server()
+            gameDirectory = project.file('run-server')
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }

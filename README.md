@@ -45,6 +45,18 @@ cooldown reduction and mana regen bonuses).
 ./gradlew runClient -PhexDemo=full   # scripted showcase that screenshots every ability
 ```
 
+Multiplayer check (dedicated server plus two local clients; needs `run-server/eula.txt`, offline mode and
+"Dev" as operator):
+
+```
+./gradlew runServer
+./gradlew runClient -PhexDemo=observe -PhexUser=Obs -PhexServer=localhost:25565   # bystander
+./gradlew runClient -PhexDemo=full -PhexServer=localhost:25565                     # caster
+```
+
+Client presentation options (screen shake strength, HUD on/off and position) are in
+`config/hexmagic-client.toml`.
+
 Balance values live in `config/hexmagic-server.toml`; everything the design fixed is the default, values
 marked PROVISIONAL are open for tuning. A local `libs/irons_spellbooks-*.jar` is used for compilation when
 present; otherwise it is fetched from Iron's maven.
