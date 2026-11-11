@@ -121,6 +121,37 @@ public final class HexDemoClient {
             }
         });
         at(10, () -> { camera(CameraType.THIRD_PERSON_FRONT); look(0, 0); });
+        float[][] tp = {
+            {0, 4, 0.5f, 0, 0, 180, 0.9f},
+            {0, 4, 1.25f, 0, 0, 0, 1f},
+            {0, 2, 0.5f, -80, 0, 0, 0.8f},
+            {0, 3, 0, 180, 0, 0, 0.8f},
+            {-1, 2, 0, 160, 0, -20, 0.8f},
+            {0, 3, 1, 0, 90, 180, 0.8f},
+        };
+        float[][] fp = {
+            {1.5f, 0, -2.75f, 0, 0, 0, 1f},
+            {3, -1, -2.75f, 0, 0, 0, 0.6f},
+            {3, -2, -3, 10, -20, 0, 0.6f},
+            {2, 1, -1.5f, 0, -45, 20, 0.5f},
+            {4, -3, -4, -10, 0, 0, 0.7f},
+            {2.5f, -1.5f, -2.5f, 0, -30, -10, 0.55f},
+        };
+        for (int i = 0; i < tp.length; i++) {
+            final float[] v = tp[i]; final int k = i;
+            at(760 + i * 4, () -> { com.hexmagic.client.render.HexStaffRenderer.debugThirdPerson = v; camera(CameraType.THIRD_PERSON_FRONT); look(0, 0); });
+            at(762 + i * 4, () -> shot("pose_tp_front_" + k));
+        }
+        for (int i = 0; i < tp.length; i++) {
+            final float[] v = tp[i]; final int k = i;
+            at(790 + i * 4, () -> { com.hexmagic.client.render.HexStaffRenderer.debugThirdPerson = v; camera(CameraType.THIRD_PERSON_BACK); look(0, 0); });
+            at(792 + i * 4, () -> shot("pose_tp_back_" + k));
+        }
+        for (int i = 0; i < fp.length; i++) {
+            final float[] v = fp[i]; final int k = i;
+            at(820 + i * 4, () -> { com.hexmagic.client.render.HexStaffRenderer.debugFirstPerson = v; camera(CameraType.FIRST_PERSON); look(0, 0); });
+            at(822 + i * 4, () -> shot("pose_fp_" + k));
+        }
         at(14, () -> shot("01_equip_anim"));
         at(30, () -> shot("02_staff_third_person"));
         at(34, () -> { camera(CameraType.FIRST_PERSON); look(0, 5); });
@@ -128,7 +159,8 @@ public final class HexDemoClient {
         at(40, () -> press(HexAbility.SHIELD));
         at(45, () -> shot("04_shield_forming"));
         at(62, () -> shot("05_shield"));
-        at(70, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("A"); press(HexAbility.DRILL); });
+        at(69, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("A"); });
+        at(70, () -> press(HexAbility.DRILL));
         at(84, () -> shot("06_drill_charging"));
         at(118, () -> shot("07_drill_charging_full"));
         at(132, () -> { camera(CameraType.FIRST_PERSON); shot("08_drill_first_person"); });
@@ -137,7 +169,8 @@ public final class HexDemoClient {
         at(138, () -> shot("09_drill_flying"));
         at(143, () -> shot("10_drill_impact"));
         at(160, () -> { look(0, 0); press(HexAbility.SHIELD); });
-        at(185, () -> { lookAt("B"); press(HexAbility.SPIKE); });
+        at(184, () -> lookAt("B"));
+        at(185, () -> press(HexAbility.SPIKE));
         at(193, () -> shot("11_spike_windup"));
         at(202, () -> shot("12_spike_flying"));
         at(225, () -> { cmd("tp @s 0 -60 -6"); });
@@ -148,7 +181,8 @@ public final class HexDemoClient {
         at(295, () -> { camera(CameraType.THIRD_PERSON_BACK); cmd("tp @s 6 -58 0"); });
         at(330, () -> shot("16_landing"));
         at(350, () -> { cmd("tp @s 0 -60 0"); cmd("summon zombie -4 -60 9 {NoAI:1b,CustomName:'\"D\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}"); });
-        at(360, () -> { lookAt("D"); press(HexAbility.PRISON); });
+        at(358, () -> lookAt("D"));
+        at(360, () -> press(HexAbility.PRISON));
         at(366, () -> shot("17_prison_prep"));
         at(385, () -> shot("18_prison"));
         at(530, () -> shot("19_prison_closing"));
@@ -156,13 +190,14 @@ public final class HexDemoClient {
         at(640, () -> { camera(CameraType.THIRD_PERSON_FRONT); look(180, -10); });
         at(650, () -> shot("21_hex_attack_swarm"));
         at(645, () -> cmd("summon zombie 0 -60 9 {NoAI:1b,CustomName:'\"E\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}"));
-        at(655, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("E"); press(HexAbility.HEX_ATTACK); });
+        at(653, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("E"); });
+        at(655, () -> press(HexAbility.HEX_ATTACK));
         at(672, () -> shot("22_hex_attack_lock"));
         at(690, () -> shot("23_hex_attack_volley"));
         at(720, () -> { look(0, 0); cmd("summon arrow 0 -58.4 6 {Motion:[0.0,0.0,-1.2],pickup:0b}"); });
         at(725, () -> shot("24_reflect"));
         at(728, () -> shot("25_reflect_2"));
-        at(760, () -> Minecraft.getInstance().stop());
+        at(850, () -> Minecraft.getInstance().stop());
     }
 
     @SubscribeEvent

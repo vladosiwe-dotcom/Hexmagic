@@ -89,6 +89,7 @@ public class HexConstructEntity extends Entity {
     private int apertureHold;
     private double flown;
     private double lastOwnerY = Double.NaN;
+    private int stallTicks;
     private long lastAbsorbTick = -1;
     @Nullable
     private Vec3 lastAbsorbPos;
@@ -644,9 +645,11 @@ public class HexConstructEntity extends Entity {
         double oy = owner.getY();
         double climb = Double.isNaN(lastOwnerY) ? 1.0 : oy - lastOwnerY;
         lastOwnerY = oy;
+        // Player positions arrive from the client and may skip a tick: only a sustained stop counts.
+        stallTicks = climb <= 0.0 ? stallTicks + 1 : 0;
         double y = Math.max(getY(), Math.min(oy - 0.02, targetY));
         boolean reached = y >= targetY - 0.01;
-        boolean stalled = stateTicks > LAUNCH_DELAY_TICKS + 4 && climb <= 0.0;
+        boolean stalled = stateTicks > LAUNCH_DELAY_TICKS + 4 && stallTicks >= 4;
         if (reached || stalled || stateTicks > 80) {
             double lockY = reached ? targetY : y;
             entityData.set(TARGET_Y, (float) lockY);

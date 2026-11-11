@@ -31,6 +31,16 @@ public class HexStaffRenderer extends BlockEntityWithoutLevelRenderer {
     private static final int CELLS = 22;
     private static final float[] col = new float[3];
 
+    /** Debug overrides {tx,ty,tz,rx,ry,rz,scale} in model-JSON units; null = use the model's display. */
+    public static float[] debugFirstPerson, debugThirdPerson;
+
+    private static void applyDebug(PoseStack pose, float[] t, boolean left) {
+        float sx = left ? -1 : 1;
+        pose.translate(sx * t[0] / 16f, t[1] / 16f, t[2] / 16f);
+        pose.mulPose(new org.joml.Quaternionf().rotationXYZ(t[3] * Mth.DEG_TO_RAD, sx * t[4] * Mth.DEG_TO_RAD, sx * t[5] * Mth.DEG_TO_RAD));
+        pose.scale(t[6], t[6], t[6]);
+    }
+
     public HexStaffRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
     }
@@ -51,7 +61,9 @@ public class HexStaffRenderer extends BlockEntityWithoutLevelRenderer {
         float time = holder != null ? holder.tickCount + partial : (mc.level != null ? mc.level.getGameTime() + partial : 0f);
 
         pose.pushPose();
-        model = model.applyTransform(ctx, pose, leftCtx);
+        if (ctx.firstPerson() && debugFirstPerson != null) applyDebug(pose, debugFirstPerson, leftCtx);
+        else if (inHand && !ctx.firstPerson() && debugThirdPerson != null) applyDebug(pose, debugThirdPerson, leftCtx);
+        else model = model.applyTransform(ctx, pose, leftCtx);
         pose.translate(-0.5f, -0.5f, -0.5f);
 
         Matrix4f cellMatrix = null;
