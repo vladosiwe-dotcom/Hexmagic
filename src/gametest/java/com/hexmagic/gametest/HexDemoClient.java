@@ -37,6 +37,7 @@ public final class HexDemoClient {
     private static final boolean ENABLED = !MODE.isEmpty() && !MODE.equals("false");
     private static final boolean POSE_ONLY = MODE.equals("pose");
     private static final boolean OBSERVE = MODE.equals("observe");
+    private static final boolean RMB = MODE.equals("rmb");
     private static int seen = -1;
     private static boolean started;
     private static int waitTicks;
@@ -112,6 +113,7 @@ public final class HexDemoClient {
 
     static {
         if (POSE_ONLY) poseScript();
+        else if (RMB) rmbScript();
         else if (!OBSERVE) fullScript();
     }
 
@@ -126,6 +128,52 @@ public final class HexDemoClient {
         int[] shots = {8, 11, 14, 30, 50, 64, 100, 120, 140, 196, 204, 240, 256, 300, 372, 390, 535, 570, 660, 692, 730};
         for (int t : shots) if (t == seen) shot("obs_" + String.format("%03d", t));
         if (seen == 770) mc.stop();
+    }
+
+    private static void holdUse(boolean down) {
+        Minecraft.getInstance().options.keyUse.setDown(down);
+    }
+
+    private static int constructs() {
+        int n = 0;
+        for (Entity e : Minecraft.getInstance().level.entitiesForRendering()) if (e instanceof com.hexmagic.entity.HexConstructEntity) n++;
+        return n;
+    }
+
+    /** Exercises the right mouse button path with real use-item packets. */
+    private static void rmbScript() {
+        at(1, () -> {
+            cmd("gamemode survival");
+            cmd("time set 1000");
+            cmd("tp @s 0 -60 0 0 0");
+            cmd("item replace entity @s hotbar.0 with hexmagic:hex_staff");
+            Minecraft.getInstance().player.getInventory().selected = 0;
+            cmd("summon zombie 0 -60 9 {NoAI:1b,CustomName:'\"A\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}");
+        });
+        at(20, () -> { camera(CameraType.THIRD_PERSON_BACK); look(0, 0); com.hexmagic.client.HexClientState.select(0); });
+        // A held button: vanilla itself repeats the click every 4 ticks while the key is down.
+        at(30, () -> holdUse(true));
+        at(54, () -> holdUse(false));
+        at(60, () -> LOGGER.info("[HexDemo] RESULT held-click shields={} charges={} (expect 1 and 2)", constructs(), com.hexmagic.client.HexClientState.charges));
+        // A second, separate click.
+        at(70, () -> holdUse(true));
+        at(72, () -> holdUse(false));
+        at(90, () -> LOGGER.info("[HexDemo] RESULT second click shields={} charges={} (expect 2 and 1)", constructs(), com.hexmagic.client.HexClientState.charges));
+        at(92, () -> shot("rmb_01_shields"));
+        // Drill: press and hold, then let go.
+        at(100, () -> { lookAt("A"); com.hexmagic.client.HexClientState.select(1); });
+        at(104, () -> holdUse(true));
+        at(120, () -> LOGGER.info("[HexDemo] RESULT drill charging id={} usingItem={} (expect a drill and true)", com.hexmagic.client.HexClientState.chargingDrill, Minecraft.getInstance().player.isUsingItem()));
+        at(150, () -> shot("rmb_02_drill_hold"));
+        at(152, () -> holdUse(false));
+        at(156, () -> shot("rmb_03_drill_released"));
+        at(175, () -> {
+            boolean dead = true;
+            for (Entity e : Minecraft.getInstance().level.entitiesForRendering()) if (e instanceof LivingEntity l && e.getCustomName() != null && l.isAlive()) dead = false;
+            LOGGER.info("[HexDemo] RESULT drill cooldown={} targetDead={} usingItem={} (expect >0, true/hit, false)", com.hexmagic.client.HexClientState.cooldown[1], dead, Minecraft.getInstance().player.isUsingItem());
+            dump("rmb_end");
+        });
+        at(185, () -> Minecraft.getInstance().stop());
     }
 
     private static void poseScript() {

@@ -87,6 +87,8 @@ public final class HexCasting {
     private static void markCast(ServerPlayer player, HexPlayerData d) {
         d.idleTicks = 0;
         d.dirty = true;
+        // A visible casting gesture with whichever hand holds the staff.
+        player.swing(HexItems.isStaff(player.getMainHandItem()) ? net.minecraft.world.InteractionHand.MAIN_HAND : net.minecraft.world.InteractionHand.OFF_HAND, true);
     }
 
     private static boolean spendCharge(ServerPlayer player, HexPlayerData d, int amount) {
@@ -400,15 +402,13 @@ public final class HexCasting {
             if (swarm == null && d.ready(HexAbility.HEX_ATTACK) && d.idleTicks >= SWARM_FORM_DELAY_TICKS && !player.isDeadOrDying()) {
                 summonSwarm(player, d);
                 changed = true;
-            } else if (swarm != null && swarm.isReady() && d.idleTicks >= HexConfig.HEX_ATTACK_IDLE_TICKS.get()) {
+            } else if (swarm != null && swarm.isReady() && d.idleTicks >= HexConfig.HEX_ATTACK_IDLE_TICKS.get() && player.tickCount % 10 == 0) {
+                // Armed: look for something hostile twice a second until one shows up.
                 LivingEntity target = HexTargeting.findAutoTarget(player, HexConfig.HEX_ATTACK_RANGE.get());
                 if (target != null) {
                     swarm.beginVolley(target);
                     d.idleTicks = 0;
                     changed = true;
-                } else if (d.idleTicks % 40 == 0) {
-                    // Nothing hostile nearby: keep waiting, but do not spam the search every tick.
-                    d.idleTicks -= 1;
                 }
             }
         }

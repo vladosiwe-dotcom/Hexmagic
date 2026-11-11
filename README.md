@@ -23,7 +23,7 @@ All keys are rebindable in *Options → Controls → Hex Staff*.
 
 | Key | Action |
 |-----|--------|
-| Right mouse | Cast the selected ability (hold for Hexa Drill) |
+| Right mouse | Cast the selected ability. One click = one cast, holding the button never repeats it; only Hexa Drill is held (charge) and released (fire) |
 | R | Select next ability for the right mouse button |
 | G | Hexa Shield |
 | V (hold) | Hexa Drill |
@@ -43,6 +43,7 @@ cooldown reduction and mana regen bonuses).
 ./gradlew runGameTestServer   # 9 server-side game tests
 ./gradlew runClient           # dev client
 ./gradlew runClient -PhexDemo=full   # scripted showcase that screenshots every ability
+./gradlew runClient -PhexDemo=rmb    # right-mouse-button path with a really held use key
 ```
 
 Multiplayer check (dedicated server plus two local clients; needs `run-server/eula.txt`, offline mode and

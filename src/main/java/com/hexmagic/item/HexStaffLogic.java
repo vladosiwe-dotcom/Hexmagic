@@ -53,8 +53,7 @@ public final class HexStaffLogic {
         if (!level.isClientSide && player instanceof ServerPlayer sp) {
             HexCasting.press(sp, ability);
         }
-        // Holding the button keeps the item "in use", so one click can never cast twice.
-        player.startUsingItem(hand);
+        if (ability == HexAbility.DRILL) player.startUsingItem(hand);
         return InteractionResultHolder.consume(stack);
     }
 

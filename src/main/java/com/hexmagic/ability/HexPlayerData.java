@@ -33,6 +33,7 @@ public class HexPlayerData {
     public boolean cushionShown;
     public double lastY = Double.NaN;
     public long lastPressTick = -1;
+    public long lastUseTick = -100;
     public int staffAwayTicks;
     public boolean dirty = true;
 

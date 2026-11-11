@@ -24,6 +24,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -165,6 +166,15 @@ public final class HexClientEvents {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
         Minecraft mc = Minecraft.getInstance();
         HexFxManager.render(event.getPoseStack(), mc.renderBuffers().bufferSource(), event.getCamera(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+    }
+
+    /** Charging the drill with the mouse should not slow the caster the way drawing a bow does. */
+    @SubscribeEvent
+    public static void onMovementInput(MovementInputUpdateEvent event) {
+        if (event.getEntity().isUsingItem() && HexItems.isStaff(event.getEntity().getUseItem())) {
+            event.getInput().leftImpulse *= 5f;
+            event.getInput().forwardImpulse *= 5f;
+        }
     }
 
     @SubscribeEvent

@@ -59,8 +59,18 @@ public final class HexServerEvents {
         int selected = HexStaffLogic.selection(player.level(), player);
         HexAbility ability = HexAbility.byIndex(selected);
         if (ability == null) return; // SELECT_IRONS: let Iron's cast
-        if (player instanceof ServerPlayer sp) HexCasting.press(sp, ability);
-        player.startUsingItem(event.getHand());
+        boolean hold = ability == HexAbility.DRILL;
+        if (player instanceof ServerPlayer sp) {
+            HexPlayerData d = HexCasting.data(sp);
+            long now = sp.level().getGameTime();
+            // While the button stays down vanilla repeats the click every few ticks; only the first
+            // one of such a run casts, so holding the mouse never burns several charges.
+            boolean repeat = now - d.lastUseTick <= 5;
+            d.lastUseTick = now;
+            if (!repeat) HexCasting.press(sp, ability);
+        }
+        // Only the drill is a held cast; everything else is a single click.
+        if (hold) player.startUsingItem(event.getHand());
         event.setCancellationResult(InteractionResult.CONSUME);
         event.setCanceled(true);
     }
