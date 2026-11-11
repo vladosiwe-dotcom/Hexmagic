@@ -1,6 +1,7 @@
 package com.hexmagic.net;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -28,7 +29,11 @@ public final class HexFx {
     public static final int CRUSH = 8;
 
     public static void send(ServerLevel level, int kind, Vec3 pos, Vec3 dir, float a, float b, int entityId) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, 96.0, new HexFxPayload(kind, pos, dir, a, b, entityId));
+        HexFxPayload payload = new HexFxPayload(kind, pos, dir, a, b, entityId);
+        for (ServerPlayer sp : level.players()) {
+            if (sp.distanceToSqr(pos) > 96.0 * 96.0) continue;
+            if (sp.connection != null && sp.connection.hasChannel(payload)) PacketDistributor.sendToPlayer(sp, payload);
+        }
     }
 
     public static void send(ServerLevel level, int kind, Vec3 pos, Vec3 dir, float a, float b) {

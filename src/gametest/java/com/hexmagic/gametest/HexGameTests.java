@@ -169,6 +169,32 @@ public class HexGameTests {
         });
     }
 
+    @GameTest(templateNamespace = "hexmagic", template = TEMPLATE, timeoutTicks = 100)
+    public static void reflectionSendsArrowBack(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Vec3 at = helper.absoluteVec(new Vec3(3.5, 1.0, 3.5));
+        player.moveTo(at.x, at.y, at.z, 0f, 0f);
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(HexItems.HEX_STAFF.get()));
+        Zombie shooter = dummy(helper, new Vec3(3.5, 1.0, 0.5));
+        Vec3 from = helper.absoluteVec(new Vec3(3.5, 2.2, 1.0));
+        Arrow arrow = new Arrow(level, from.x, from.y, from.z, ItemStack.EMPTY, null);
+        arrow.setOwner(shooter);
+        arrow.setDeltaMovement(0, 0, 1.2);
+        arrow.setNoGravity(true);
+        level.addFreshEntity(arrow);
+        float hp = player.getHealth();
+        float shooterHp = shooter.getHealth();
+        helper.runAfterDelay(12, () -> {
+            // The arrow turns around, flies back and hits the zombie that shot it.
+            helper.assertTrue(shooter.getHealth() < shooterHp, "reflected arrow should hit the shooter, hp=" + shooter.getHealth());
+            helper.assertTrue(player.getHealth() >= hp - 0.01f, "wielder should not have been hurt");
+            helper.assertTrue(!com.hexmagic.ability.HexCasting.data(player).ready(com.hexmagic.ability.HexAbility.REFLECTION), "reflection should be on cooldown");
+            player.discard();
+            helper.succeed();
+        });
+    }
+
     @GameTest(templateNamespace = "hexmagic", template = TEMPLATE, timeoutTicks = 20)
     public static void launchVelocityMath(GameTestHelper helper) {
         double v = HexConstructEntity.launchVelocity(15.0, 0.08);

@@ -421,8 +421,8 @@ public final class HexCasting {
 
         if (changed || d.dirty || player.tickCount % 20 == 0) {
             d.dirty = false;
-            PacketDistributor.sendToPlayer(player, SyncStatePayload.of(d, maxCharges, regenMax, HexConfig.HEX_ATTACK_IDLE_TICKS.get(),
-                    swarm != null && swarm.isReady()));
+            SyncStatePayload payload = SyncStatePayload.of(d, maxCharges, regenMax, HexConfig.HEX_ATTACK_IDLE_TICKS.get(), swarm != null && swarm.isReady());
+            if (player.connection != null && player.connection.hasChannel(payload)) PacketDistributor.sendToPlayer(player, payload);
         }
     }
 

@@ -33,7 +33,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class HexDemoClient {
     private HexDemoClient() {}
 
-    private static final boolean ENABLED = Boolean.getBoolean("hexmagic.demo");
+    private static final String MODE = System.getProperty("hexmagic.demo", "");
+    private static final boolean ENABLED = !MODE.isEmpty() && !MODE.equals("false");
+    private static final boolean POSE_ONLY = MODE.equals("pose");
     private static boolean started;
     private static int waitTicks;
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("HexDemo");
@@ -107,6 +109,40 @@ public final class HexDemoClient {
     }
 
     static {
+        if (POSE_ONLY) poseScript();
+        else fullScript();
+    }
+
+    private static void poseScript() {
+        at(1, () -> {
+            cmd("time set 1000");
+            cmd("weather clear");
+            cmd("tp @s 0 -60 0 0 0");
+            cmd("item replace entity @s hotbar.0 with hexmagic:hex_staff");
+            Minecraft.getInstance().player.getInventory().selected = 0;
+        });
+        // Alternative hand poses to compare against the model's own display transforms.
+        float[][] v3 = {{-7, 7, 2, 90, 0, 0, 1.15f}, {-10, 7, 2, 90, 0, 0, 1.2f}, {1, 7, 2, 90, 0, 0, 1.2f}, {0, 4, 8, 0, 0, 0, 1.5f}};
+        float[][] v1 = {{10, 0, -8, 0, 0, -20, 0.55f}, {8, -4, 0, 0, 0, 0, 0.45f}, {12, -8, -4, 0, 0, -20, 0.5f}, {4, 0, -10, 0, 0, 0, 0.6f}};
+        int t = 25;
+        for (int i = 0; i < v3.length; i++) {
+            final float[] r = v3[i]; final int k = i;
+            at(t, () -> { com.hexmagic.client.render.HexStaffRenderer.debugThirdPerson = r; camera(CameraType.THIRD_PERSON_FRONT); look(0, 0); });
+            at(t + 2, () -> shot("rot_tp_front_" + k));
+            at(t + 3, () -> camera(CameraType.THIRD_PERSON_BACK));
+            at(t + 5, () -> shot("rot_tp_back_" + k));
+            t += 6;
+        }
+        for (int i = 0; i < v1.length; i++) {
+            final float[] r = v1[i]; final int k = i;
+            at(t, () -> { com.hexmagic.client.render.HexStaffRenderer.debugFirstPerson = r; camera(CameraType.FIRST_PERSON); look(0, 0); });
+            at(t + 2, () -> shot("rot_fp_" + k));
+            t += 3;
+        }
+        at(t + 2, () -> Minecraft.getInstance().stop());
+    }
+
+    private static void fullScript() {
         at(1, () -> {
             cmd("time set 1000");
             cmd("weather clear");
@@ -152,7 +188,9 @@ public final class HexDemoClient {
             at(820 + i * 4, () -> { com.hexmagic.client.render.HexStaffRenderer.debugFirstPerson = v; camera(CameraType.FIRST_PERSON); look(0, 0); });
             at(822 + i * 4, () -> shot("pose_fp_" + k));
         }
-        at(14, () -> shot("01_equip_anim"));
+        at(6, () -> shot("00_equip_anim_a"));
+        at(10, () -> shot("01_equip_anim"));
+        at(13, () -> shot("01b_equip_anim_c"));
         at(30, () -> shot("02_staff_third_person"));
         at(34, () -> { camera(CameraType.FIRST_PERSON); look(0, 5); });
         at(36, () -> shot("03_staff_first_person"));
@@ -194,7 +232,8 @@ public final class HexDemoClient {
         at(655, () -> press(HexAbility.HEX_ATTACK));
         at(672, () -> shot("22_hex_attack_lock"));
         at(690, () -> shot("23_hex_attack_volley"));
-        at(720, () -> { look(0, 0); cmd("summon arrow 0 -58.4 6 {Motion:[0.0,0.0,-1.2],pickup:0b}"); });
+        at(718, () -> { cmd("tp @s 12 -60 0"); look(0, 0); });
+        at(720, () -> cmd("summon arrow 12 -58.4 6 {Motion:[0.0,0.0,-1.2],pickup:0b}"));
         at(725, () -> shot("24_reflect"));
         at(728, () -> shot("25_reflect_2"));
         at(850, () -> Minecraft.getInstance().stop());
