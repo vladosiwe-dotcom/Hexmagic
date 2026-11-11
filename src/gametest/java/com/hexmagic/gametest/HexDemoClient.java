@@ -80,9 +80,25 @@ public final class HexDemoClient {
         }
     }
 
+    private static void dump(String tag) {
+        Minecraft mc = Minecraft.getInstance();
+        var cam = mc.gameRenderer.getMainCamera().getPosition();
+        LOGGER.info("[HexDemo] {} player={} cam={} look={}", tag, mc.player.position(), cam, mc.player.getLookAngle());
+        for (Entity e : mc.level.entitiesForRendering()) {
+            if (e instanceof com.hexmagic.entity.HexConstructEntity c) {
+                LOGGER.info("[HexDemo]   construct id={} kind={} state={} pos={} yaw={} halfW={} halfH={} hp={} owner={}", c.getId(), c.getKind(), c.getState(), c.position(), c.getPanelYaw(), c.getHalfW(), c.getHalfH(), c.getHp(), c.getOwnerId());
+            } else if (e instanceof com.hexmagic.entity.HexPrisonEntity p) {
+                LOGGER.info("[HexDemo]   prison id={} pos={}", p.getId(), p.position());
+            } else if (e instanceof LivingEntity l && e != mc.player) {
+                LOGGER.info("[HexDemo]   living {} pos={} hp={}", l.getName().getString(), l.position(), l.getHealth());
+            }
+        }
+    }
+
     private static void shot(String name) {
         Minecraft mc = Minecraft.getInstance();
         LOGGER.info("[HexDemo] screenshot {}", name);
+        dump(name);
         Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), c -> {});
     }
 
@@ -99,9 +115,10 @@ public final class HexDemoClient {
             cmd("tp @s 0 -60 0 0 0");
             cmd("item replace entity @s hotbar.0 with hexmagic:hex_staff");
             Minecraft.getInstance().player.getInventory().selected = 0;
-            cmd("summon zombie 0 -60 8 {NoAI:1b,CustomName:'\"A\"',PersistenceRequired:1b}");
-            cmd("summon zombie 3 -60 10 {NoAI:1b,CustomName:'\"B\"',PersistenceRequired:1b}");
-            cmd("summon zombie -4 -60 9 {NoAI:1b,CustomName:'\"C\"',PersistenceRequired:1b}");
+            for (String z : new String[] {"0 -60 8 A", "3 -60 10 B", "-4 -60 9 C"}) {
+                String[] p = z.split(" ");
+                cmd("summon zombie " + p[0] + " " + p[1] + " " + p[2] + " {NoAI:1b,CustomName:'\"" + p[3] + "\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}");
+            }
         });
         at(10, () -> { camera(CameraType.THIRD_PERSON_FRONT); look(0, 0); });
         at(14, () -> shot("01_equip_anim"));
@@ -123,20 +140,23 @@ public final class HexDemoClient {
         at(185, () -> { lookAt("B"); press(HexAbility.SPIKE); });
         at(193, () -> shot("11_spike_windup"));
         at(202, () -> shot("12_spike_flying"));
-        at(230, () -> { camera(CameraType.THIRD_PERSON_FRONT); look(0, 10); press(HexAbility.LAUNCH); });
+        at(225, () -> { cmd("tp @s 0 -60 -6"); });
+        at(230, () -> { camera(CameraType.THIRD_PERSON_BACK); look(180, 10); press(HexAbility.LAUNCH); });
         at(235, () -> shot("13_launch_platform"));
         at(252, () -> shot("14_platform_rising"));
         at(290, () -> shot("15_platform_top"));
         at(295, () -> { camera(CameraType.THIRD_PERSON_BACK); cmd("tp @s 6 -58 0"); });
         at(330, () -> shot("16_landing"));
-        at(360, () -> { cmd("tp @s 0 -60 0"); lookAt("C"); press(HexAbility.PRISON); });
+        at(350, () -> { cmd("tp @s 0 -60 0"); cmd("summon zombie -4 -60 9 {NoAI:1b,CustomName:'\"D\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}"); });
+        at(360, () -> { lookAt("D"); press(HexAbility.PRISON); });
         at(366, () -> shot("17_prison_prep"));
         at(385, () -> shot("18_prison"));
         at(530, () -> shot("19_prison_closing"));
         at(565, () -> shot("20_prison_crush"));
         at(640, () -> { camera(CameraType.THIRD_PERSON_FRONT); look(180, -10); });
         at(650, () -> shot("21_hex_attack_swarm"));
-        at(655, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("A"); press(HexAbility.HEX_ATTACK); });
+        at(645, () -> cmd("summon zombie 0 -60 9 {NoAI:1b,CustomName:'\"E\"',PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:iron_helmet\",count:1}]}"));
+        at(655, () -> { camera(CameraType.THIRD_PERSON_BACK); lookAt("E"); press(HexAbility.HEX_ATTACK); });
         at(672, () -> shot("22_hex_attack_lock"));
         at(690, () -> shot("23_hex_attack_volley"));
         at(720, () -> { look(0, 0); cmd("summon arrow 0 -58.4 6 {Motion:[0.0,0.0,-1.2],pickup:0b}"); });
