@@ -1,0 +1,27 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "equipment",
+ "pattern": [
+  "HAH",
+  " B ",
+  " D "
+ ],
+ "key": {
+  "H": {
+   "item": "minecraft:honeycomb"
+  },
+  "A": {
+   "item": "minecraft:amethyst_shard"
+  },
+  "B": {
+   "item": "minecraft:breeze_rod"
+  },
+  "D": {
+   "item": "minecraft:diamond"
+  }
+ },
+ "result": {
+  "id": "hexmagic:hex_staff",
+  "count": 1
+ }
+}

@@ -1,0 +1,122 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+sourceSets {
+    // Game tests live in their own source set so they never ship in the release jar.
+    gametest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    gametestCompileClasspath.extendsFrom compileClasspath
+    gametestRuntimeClasspath.extendsFrom runtimeClasspath
+}
+
+neoForge {
+    version = project.neo_version
+
+    addModdingDependenciesTo(sourceSets.gametest)
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            sourceSet = sourceSets.gametest
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.INFO
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+        hexmagic_gametest {
+            sourceSet(sourceSets.gametest)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    // Official Iron's Spells 'n Spellbooks maven.
+    maven {
+        name = "Iron's Maven"
+        url = 'https://code.redspace.io/releases'
+        content { includeGroup 'io.redspace.ironsspellbooks' }
+    }
+}
+
+dependencies {
+    // Iron's Spells 'n Spellbooks is compiled against but stays optional at runtime: every reference
+    // to its classes lives in com.hexmagic.compat.irons and is only loaded when the mod is present.
+    // A jar dropped into libs/ wins over the maven so the project also builds offline.
+    def localIrons = fileTree(dir: 'libs', include: 'irons_spellbooks-*.jar')
+    if (!localIrons.isEmpty()) {
+        compileOnly localIrons
+    } else {
+        compileOnly("io.redspace.ironsspellbooks:irons_spellbooks:${irons_spellbooks_version}") { transitive = false }
+    }
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

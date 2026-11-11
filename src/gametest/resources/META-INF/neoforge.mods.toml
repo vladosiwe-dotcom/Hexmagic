@@ -1,0 +1,15 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="hexmagic_gametest"
+version="1.0.0"
+displayName="Hex Magic Game Tests"
+
+[[dependencies.hexmagic_gametest]]
+    modId="hexmagic"
+    type="required"
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
