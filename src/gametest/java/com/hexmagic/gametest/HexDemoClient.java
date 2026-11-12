@@ -38,6 +38,7 @@ public final class HexDemoClient {
     private static final boolean POSE_ONLY = MODE.equals("pose");
     private static final boolean OBSERVE = MODE.equals("observe");
     private static final boolean RMB = MODE.equals("rmb");
+    private static final boolean FILM = MODE.equals("film");
     private static int seen = -1;
     private static boolean started;
     private static int waitTicks;
@@ -114,7 +115,7 @@ public final class HexDemoClient {
     static {
         if (POSE_ONLY) poseScript();
         else if (RMB) rmbScript();
-        else if (!OBSERVE) fullScript();
+        else if (!OBSERVE && !FILM) fullScript();
     }
 
     /** Second player: stands aside, keeps looking at "Dev" and photographs what a bystander sees. */
@@ -336,6 +337,7 @@ public final class HexDemoClient {
             }
             return;
         }
+        if (FILM) return; // driven by film.HexFilmClient
         if (mc.player == null || mc.screen != null) return;
         if (OBSERVE) {
             observeTick(mc);

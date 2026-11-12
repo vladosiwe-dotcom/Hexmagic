@@ -38,7 +38,8 @@ neoForge {
             if (project.hasProperty('hexDemo')) {
                 // Scripted screenshot run: ./gradlew runClient -PhexDemo
                 systemProperty 'hexmagic.demo', project.property('hexDemo') ?: 'true'
-                programArguments.addAll('--width', '1280', '--height', '720')
+                def size = (project.findProperty('hexSize') ?: '1280x720').split('x')
+                programArguments.addAll('--width', size[0], '--height', size[1])
             }
             if (project.hasProperty('hexUser')) {
                 // A second local player with its own game directory.
@@ -56,6 +57,10 @@ neoForge {
             server()
             gameDirectory = project.file('run-server')
             programArgument '--nogui'
+            if (project.hasProperty('hexDirector')) {
+                // Stages the showcase film for the HexMage / Rival / Cam clients.
+                systemProperty 'hexmagic.director', 'true'
+            }
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
