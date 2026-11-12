@@ -65,6 +65,10 @@ Multiplayer check (dedicated server plus two local clients; needs `run-server/eu
 ./gradlew runClient -PhexDemo=full -PhexServer=localhost:25565                     # caster
 ```
 
+Showcase film (dedicated server, caster, rival and a scripted camera; needs Xvfb and ffmpeg):
+`tools/film/run_film.sh` records the camera screen, `tools/film/soundtrack.py` lays the mod's sounds on
+the cut. The scenes, captions and camera moves are in `HexFilm.java` in the gametest sources.
+
 Client presentation options (screen shake strength, HUD on/off and position) are in
 `config/hexmagic-client.toml`.
 
